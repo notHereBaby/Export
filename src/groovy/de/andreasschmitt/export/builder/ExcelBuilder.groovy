@@ -13,8 +13,12 @@ import jxl.write.WriteException
 import jxl.write.biff.RowsExceededException
 import jxl.write.WritableFont
 import jxl.format.UnderlineStyle
-import jxl.format.UnderlineStyleimport jxl.write.WritableCellFormat
-import jxl.write.biff.CellValueimport jxl.write.WritableFont
+import jxl.format.UnderlineStyle
+import jxl.write.WritableCellFormat
+import jxl.write.biff.CellValue
+import jxl.write.WritableFont
+import jxl.write.WritableHyperlink
+
 import org.apache.commons.logging.*
 
 /**
@@ -126,7 +130,7 @@ class ExcelBuilder extends BuilderSupport {
     			try {
         			log.debug("Creating sheet")
         			sheet = workbook.createSheet(attributes?.name, workbook.getNumberOfSheets())	
-        			if (attributes?.widths && !attributes?.widths?.isEmpty()) {
+					if (attributes?.widths && !attributes?.widths?.isEmpty()) {
 						attributes.widths.eachWithIndex { width, i ->
 							sheet.setColumnView(i, (width < 1.0 ? width * 100 : width) as int )
 						}
@@ -155,7 +159,17 @@ class ExcelBuilder extends BuilderSupport {
     					value.setCellFormat(formats[attributes.format])
     				}
     				
-    				sheet.addCell(value)
+					
+					// Create hyperlinks for values beginning with http
+					if (attributes?.value?.toString()?.toLowerCase()?.startsWith('http://') || attributes?.value?.toString()?.toLowerCase()?.startsWith('https://')) {
+        				log.debug("Changing cell to Hyperlink")
+        				def link = new WritableHyperlink(attributes?.column, attributes?.row, new URL(attributes?.value?.toString()))
+						link.setDescription(attributes?.value?.toString() ?: 'no URL')
+						sheet.addHyperlink(link);
+					}
+					else {
+						sheet.addCell(value)
+					}
     			}
     			catch(Exception e){
     				log.error("Error adding cell with attributes: ${attributes}", e)

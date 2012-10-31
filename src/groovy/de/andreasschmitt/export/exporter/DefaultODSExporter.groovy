@@ -30,25 +30,34 @@ class DefaultODSExporter  extends AbstractExporter {
 			 
 			 table.removeChild(table.getFirstChild().getNextSibling())
 			 
-			 OdfTableHeaderRows tableHeaderRows = new OdfTableHeaderRows(contentDom)
-			 OdfTableRow headerRow = new OdfTableRow(contentDom)
-			 
-			 //Header
-			 fields.each { field ->		     	
-		     	String label = getLabel(field) 
-		     	
-		        OdfTableCell cell = new OdfTableCell(contentDom)
-		        cell.setStringValue(label)
-		        cell.setValueType(OdfValueType.STRING)
-		        
-		        OdfParagraph para = new OdfParagraph(contentDom)
-		        para.appendChild(contentDom.createTextNode(label))
-		        
-		        cell.appendChild(para)
-		        headerRow.appendChild(cell)
-		        tableHeaderRows.appendChild(headerRow)
+			 // Enable/Disable header output
+			 boolean isHeaderEnabled = true
+			 if(getParameters().containsKey("header.enabled")){
+				 isHeaderEnabled = getParameters().get("header.enabled")
 			 }
-		     table.appendChild(tableHeaderRows)
+			 
+			 // Create header
+			 if(isHeaderEnabled){
+				 OdfTableHeaderRows tableHeaderRows = new OdfTableHeaderRows(contentDom)
+				 OdfTableRow headerRow = new OdfTableRow(contentDom)
+			 			 
+				 //Header
+				 fields.each { field ->		     	
+			     	String label = getLabel(field) 
+			     	
+			        OdfTableCell cell = new OdfTableCell(contentDom)
+			        cell.setStringValue(label)
+			        cell.setValueType(OdfValueType.STRING)
+			        
+			        OdfParagraph para = new OdfParagraph(contentDom)
+			        para.appendChild(contentDom.createTextNode(label))
+			        
+			        cell.appendChild(para)
+			        headerRow.appendChild(cell)
+			        tableHeaderRows.appendChild(headerRow)
+				 }
+			     table.appendChild(tableHeaderRows)
+			 }
 			 
 		     //Rows
 		     data.each { object ->

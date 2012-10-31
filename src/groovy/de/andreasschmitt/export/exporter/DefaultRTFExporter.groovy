@@ -58,36 +58,9 @@ public class DefaultRTFExporter extends AbstractExporter {
 			document.setFooter(footer)
 			
 			if(getParameters().containsKey("title")){
-				float[] tableColumnWidths = new float[2]
-                tableColumnWidths[0] = new Float("0.1")
-                tableColumnWidths[1] = new Float("0.5")
-                //Fontes do cabeçalho
-                Font orgaoNomeFont = createFont("orgaoNomeFont", FontFactory.HELVETICA, encoding, 16, Font.BOLD)
-                Font orgaoUnidadeFont = createFont("orgaoUnidadeFont", FontFactory.HELVETICA, encoding, 12, Font.NORMAL)
-                Font titleFont = createFont("titleFont", FontFactory.HELVETICA, encoding, 12, Font.BOLD)
-                Font trabalhadoresFont = createFont("trabalhadoresFont", FontFactory.HELVETICA, encoding, 10, Font.NORMAL)
-                //Parametros do cabeçalho
-			    Table table = new Table(tableColumnWidths);
-                Paragraph titulo = new Paragraph(getParameters().get("title"), titleFont)
-                Paragraph trabalhadores = new Paragraph(getParameters().get("trabalhadores"), trabalhadoresFont)
-                Paragraph orgaoNome = new Paragraph(getParameters().get("orgaoNome"), orgaoNomeFont)
-                Paragraph orgaoUnidade = new Paragraph(getParameters().get("orgaoUg"), orgaoUnidadeFont)
-                //construção do cabeçalho
-                Cell cell = new Cell(orgaoNome);
-                table.addCell("");
-
-                table.addCell(cell);
-                cell = new Cell (orgaoUnidade);
-                table.addCell("");
-                table.addCell(cell);
-                cell = new Cell (titulo);
-                table.addCell("");
-                table.addCell(cell);
-                cell = new Cell (trabalhadores);
-                table.addCell("");
-                table.addCell(cell);
-				table.setBottom(10)
-				document.add(table)
+				Paragraph paragraph = new Paragraph(getParameters().get("title"), title)
+				paragraph.setSpacingAfter(10)
+				document.add(paragraph)
 			}
 			
 			Table table = new Table(fields?.size())
@@ -112,11 +85,20 @@ public class DefaultRTFExporter extends AbstractExporter {
 			Color borderColor = new Color(163, 163, 163)
 			float minimumCellHeight = 17
 			
-			fields.each { field ->
-				String value = getLabel(field)
-				Cell cell = new Cell(new Paragraph(value, header))
-				cell.setBorderColor(borderColor)
-				table.addCell(cell)
+			// Enable/Disable header output
+			boolean isHeaderEnabled = true
+			if(getParameters().containsKey("header.enabled")){
+				isHeaderEnabled = getParameters().get("header.enabled")
+			}
+			
+			// Create header
+			if(isHeaderEnabled){
+				fields.each { field ->
+					String value = getLabel(field)
+					Cell cell = new Cell(new Paragraph(value, header))
+					cell.setBorderColor(borderColor)
+					table.addCell(cell)
+				}
 			}
 			
 			Color separatorColor = new Color(238, 238, 238)
@@ -134,9 +116,6 @@ public class DefaultRTFExporter extends AbstractExporter {
 			}
 
 			document.add(table)
-            Paragraph footerText = new Paragraph(getParameters().get("footer"), text)
-            footerText.setSpacingAfter(10)
-            document.add(footerText)
 			document.close()
 		}
 		catch(Exception e){

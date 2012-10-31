@@ -13,7 +13,10 @@ class ExporterUtil {
 	private static Map excludes = [hasMany: true, belongsTo: true, searchable: true, __timeStamp: true, 
 	                constraints: true, version: true, metaClass: true, '$callSiteArray': true, 
 					'$ownClass': true, '$staticClassInfo': true, '$staticClassInfo$': true, 
-					mapping: true]
+					mapping: true, '$defaultDatabindingWhiteList': true, '__$stMC': true,
+					errors: true, instanceControllersDomainBindingApi: true, 
+					instanceConvertersApi: true, instanceDatabindingApi: true,
+					'log': true]
 	
 	private static Log log = LogFactory.getLog(ExporterUtil)
 	
@@ -59,7 +62,12 @@ class ExporterUtil {
 	public static List getFields(Object domain){
 		List props = []
 		
-		if(domain instanceof Class){
+		if(domain instanceof Map){
+			domain?.each { key, value ->
+				props.add(key)
+			}
+		}
+		else if(domain instanceof Class){
 			domain?.properties?.declaredFields.each { field ->
 				if(!excludes.containsKey(field.name) && !field.name.contains("class\$") && !field.name.startsWith("__timeStamp") && field.name != "id"){
 					props.add(field.name)
@@ -77,7 +85,10 @@ class ExporterUtil {
 		// Get super class attributes
 		Class superClazz = null
 		
-		if(domain instanceof Class){
+		if(domain instanceof Map){
+			superClazz = null
+		}
+		else if(domain instanceof Class){
 			superClazz = domain?.getSuperclass()
 		}
 		else {

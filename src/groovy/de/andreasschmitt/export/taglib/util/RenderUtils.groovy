@@ -4,8 +4,6 @@ import java.rmi.server.UID
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.Formatter
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.plugins.PluginManagerHolder
 import org.apache.commons.codec.digest.DigestUtils
 import java.util.regex.*
 
@@ -34,7 +32,7 @@ class RenderUtils {
 		//String pluginVersion = plugin?.version
 				
 		//The above version doesn't work on Jetty so for now an ugly approach will be used
-		String pluginVersion = "0.9"
+		String pluginVersion = "1.5"
 		
 		"${contextPath}/plugins/${pluginName.toLowerCase()}-$pluginVersion"
 	}

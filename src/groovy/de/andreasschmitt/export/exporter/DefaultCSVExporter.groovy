@@ -8,11 +8,11 @@ import au.com.bytecode.opencsv.CSVWriter
  */
 class DefaultCSVExporter extends AbstractExporter {
 	
-	char separator = ','
-	char quoteCharacter = '"'
-	String lineEnd = CSVWriter.DEFAULT_LINE_END
-	
 	protected void exportData(OutputStream outputStream, List data, List fields) throws ExportingException{
+		char separator = ','
+		char quoteCharacter = '"'
+		String lineEnd = CSVWriter.DEFAULT_LINE_END
+		
 		try {
 			if(getParameters().containsKey("separator")){
 				separator = getParameters().get("separator")
@@ -27,13 +27,21 @@ class DefaultCSVExporter extends AbstractExporter {
 			// Get stream writer considering charsets
 			CSVWriter writer = new CSVWriter(getOutputStreamWriter(outputStream), separator, quoteCharacter, lineEnd)
 			
-			//Create header
-			List header = []
-			fields.each { field ->
-				String value = getLabel(field)
-				header.add(value)
+			// Enable/Disable header output
+			boolean isHeaderEnabled = true
+			if(getParameters().containsKey("header.enabled")){
+				isHeaderEnabled = getParameters().get("header.enabled")
 			}
-			writer.writeNext(header as String[])
+			
+			//Create header
+			if(isHeaderEnabled){
+				List header = []
+				fields.each { field ->
+					String value = getLabel(field)
+					header.add(value)
+				}
+				writer.writeNext(header as String[])
+			}
 			
 			//Rows
 			data.each { object ->
