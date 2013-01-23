@@ -1,10 +1,8 @@
-import org.apache.commons.logging.LogFactory
-
-class ExportGrailsPlugin {
+class ExportSimuleGrailsPlugin {
     // the plugin version
-    def version = "1.5"
+    def version = "0.1"
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "1.3 > *"
+    def grailsVersion = "2.1 > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
@@ -14,14 +12,14 @@ class ExportGrailsPlugin {
 
     // TODO Fill in these fields
     def title = "Export Simule Plugin" // Headline display name of the plugin
-    def author = "Pedro Henrique"
-    def authorEmail = "pedrohenriquerls@gmail.com"
+    def author = "Your name"
+    def authorEmail = ""
     def description = '''\
-mod do plugin de andrea schimdt
+Brief summary/description of the plugin.
 '''
 
     // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/export"
+    def documentation = "http://grails.org/plugin/export-simule"
 
     // Extra (optional) plugin metadata
 
@@ -38,45 +36,14 @@ mod do plugin de andrea schimdt
 //    def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
 
     // Online location of the plugin's browseable source code.
-//    def scm = [ url: "http://svn.grails-plugins.codehaus.org/browse/grails-plugins/" ]
+//    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
 
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before
     }
 
-    def doWithSpring = {        
-		//This is only necessary here, because later on log is injected by Spring
-		def log = LogFactory.getLog(ExportGrailsPlugin)
-		 
-		"exporterFactory"(de.andreasschmitt.export.exporter.DefaultExporterFactory)
-		
-		try {				
-			ExportConfig.exporters.each { key, value ->
-		  		try {
-		  			//Override default renderer configuration
-					if(application.config?.export."${key}"){
-						value = grailsApplication.config.export."${key}"
-					}
-		  			
-		      		Class clazz = Class.forName(value, true, new GroovyClassLoader())
-		      		
-		      		//Add to spring
-		      		"$key"(clazz) { bean ->
-						  bean.scope = "prototype"
-					}	
-		  		}
-		  		catch(ClassNotFoundException e){
-		  			log.error("Couldn't find class: ${value}", e)
-		  		}
-			}			
-		}
-		catch(Exception e){
-			log.error("Error initializing Export plugin", e)
-		}
-		catch(Error e){
-			//Strange error which happens when using generate-all and hibernate.cfg
-			log.error("Error initializing Export plugin")
-		}
+    def doWithSpring = {
+        // TODO Implement runtime spring config (optional)
     }
 
     def doWithDynamicMethods = { ctx ->
