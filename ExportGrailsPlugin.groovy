@@ -13,12 +13,11 @@ class ExportGrailsPlugin {
     ]
 
     // TODO Fill in these fields
-    def title = "Export Plugin" // Headline display name of the plugin
-    def author = "Andreas Schmitt"
-    def authorEmail = "andreas.schmitt.mi@gmail.com"
+    def title = "Export Simule Plugin" // Headline display name of the plugin
+    def author = "Pedro Henrique"
+    def authorEmail = "pedrohenriquerls@gmail.com"
     def description = '''\
-This plugin offers export functionality supporting different formats e.g. CSV, Excel, Open Document Spreadsheet, PDF and XML 
-and can be extended to add additional formats. 
+mod do plugin de andrea schimdt
 '''
 
     // URL to the plugin's documentation
